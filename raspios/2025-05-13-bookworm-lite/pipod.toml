@@ -1,7 +1,7 @@
-name = "ghcr.io/gaboose/raspios-lite:2025-05-13-bookworm"
+name = "ghcr.io/gaboose/raspios:2025-05-13-bookworm-lite"
 
 [labels]
-"org.opencontainers.image.source"="https://github.com/gaboose/pipod"
+"org.opencontainers.image.source"="https://github.com/gaboose/pipod-images"
 
 [platform.'linux/arm64'.labels]
 "com.github.gaboose.pipod.source.url" = "https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2025-05-13/2025-05-13-raspios-bookworm-arm64-lite.img.xz"

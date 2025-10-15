@@ -1,7 +1,7 @@
 name = "ghcr.io/gaboose/elkpi:1.0.0"
 
 [labels]
-"org.opencontainers.image.source" = "https://github.com/gaboose/pipod"
+"org.opencontainers.image.source" = "https://github.com/gaboose/pipod-images"
 
 [platform.'linux/arm64'.labels]
 "com.github.gaboose.pipod.source.url" = "https://github.com/elk-audio/elk-pi/releases/download/1.0.0/elkpi-audio-os-image-raspberrypi4-64-v1.0.0.wic.bz2"
