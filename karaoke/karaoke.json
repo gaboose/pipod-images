@@ -1,0 +1,88 @@
+{
+    "host_config" : {
+        "samplerate" : 48000,
+        "playing_mode" : "playing"
+    },
+    "tracks" : [
+        {
+            "name" : "main",
+            "channels" : 2,
+            "inputs" : [
+                {
+                    "engine_bus" : 0,
+                    "track_bus" : 0
+                }
+            ],
+            "outputs" : [
+                {
+                    "engine_bus" : 0,
+                    "track_bus" : 0
+                }
+            ],
+            "plugins" : [
+                {
+                    "uid" : "sushi.testing.gain",
+                    "name" : "gain",
+                    "type" : "internal"
+                },
+                {
+                    "uid" : "sushi.testing.gain",
+                    "name" : "gain2",
+                    "type" : "internal"
+                },
+                {
+                    "uid" : "sushi.brickworks.eq3band",
+                    "name" : "eq3band",
+                    "type" : "internal"
+                },
+                {
+                    "name" : "deesser",
+                    "type" : "lv2",
+                    "uri" : "http://calf.sourceforge.net/plugins/Deesser"
+                },
+                {
+                    "name" : "compressor",
+                    "type" : "lv2",
+                    "uri" : "http://calf.sourceforge.net/plugins/Compressor"
+                },
+                {
+                    "name" : "delay",
+                    "type" : "lv2",
+                    "uri" : "http://moddevices.com/plugins/tap/doubler"
+                },
+                {
+                    "name" : "reverb",
+                    "type" : "lv2",
+                    "uri" : "http://calf.sourceforge.net/plugins/Reverb"
+                },
+                {
+                    "name" : "stereo_width",
+                    "type" : "lv2",
+                    "uri" : "http://gareus.org/oss/lv2/balance"
+                }
+            ]
+        }
+    ],
+    "initial_state" : [
+        {
+            "processor": "gain",
+            "parameters" : {
+                "gain" : 1
+            }
+        },
+        {
+            "processor": "gain2",
+            "parameters" : {
+                "gain" : 0.9
+            }
+        },
+        {
+            "processor" : "eq3band",
+            "parameters" : {
+                "lowshelf_gain" : 0.5,
+                "highshelf_gain" : 0.4,
+                "peak_gain" : 0.83
+            }
+        }
+    ]
+}

@@ -1,0 +1,21 @@
+FROM ghcr.io/gaboose/raspios:2025-10-01-trixie-lite
+
+WORKDIR /root
+
+RUN apt update && \
+    wget 'https://github.com/badaix/snapcast/releases/download/v0.34.0/snapserver_0.34.0-1_arm64_trixie.deb' && \
+    wget 'https://github.com/badaix/snapcast/releases/download/v0.34.0/snapclient_0.34.0-1_arm64_trixie.deb' && \
+    wget 'https://dtcooper.github.io/raspotify/raspotify-latest_arm64.deb' && \
+    apt install -fy \
+        ./snapserver_0.34.0-1_arm64_trixie.deb \
+        ./snapclient_0.34.0-1_arm64_trixie.deb \
+        ./raspotify-latest_arm64.deb \
+        shairport-sync && \
+    rm snapserver_0.34.0-1_arm64_trixie.deb \
+       snapclient_0.34.0-1_arm64_trixie.deb \
+       raspotify-latest_arm64.deb && \
+    rm -rf /var/lib/apt/lists/*
+
+ADD snapserver.conf /etc/snapserver.conf
+RUN systemctl disable raspotify
+RUN systemctl disable shairport-sync

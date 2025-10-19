@@ -1,0 +1,17 @@
+FROM ghcr.io/gaboose/elkpi:1.0.0
+
+# Setup the plugin pack
+RUN mkdir /home/mind/pluginpack && \
+    curl -L "https://github.com/elk-community/elk-plugins-pack/releases/download/v0.7.0/elk-plugins-pack-64.tar.gz" | \
+    tar -xz -C /home/mind/pluginpack/ && \
+    chown mind:mind -R /home/mind/pluginpack
+RUN sed -i '/^\[Service\]/a Environment="LV2_PATH=/home/mind/pluginpack/lv2"' /lib/systemd/system/sushi.service
+
+# Configure automatic sushi startup
+RUN systemctl enable sushi
+ADD --chown=mind:mind karaoke.json /home/mind/config_files/karaoke.json
+ADD --chown=mind:mind karaoke_old.json /home/mind/config_files/karaoke_old.json
+RUN sed -i 's/empty.json/karaoke.json/g' /lib/systemd/system/sushi.service
+
+# Enable read-only access to root file system on boot
+RUN elk_system_utils --ro-rootfs enable
