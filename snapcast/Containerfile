@@ -1,21 +1,28 @@
 FROM ghcr.io/gaboose/raspios:2025-10-01-trixie-lite
 
+ENV SNAPCAST_VERSION=0.34.0
+
 WORKDIR /root
 
+RUN curl -sSL https://dtcooper.github.io/raspotify/key.asc > /usr/share/keyrings/raspotify_key.asc && \
+    chmod 644 /usr/share/keyrings/raspotify_key.asc && \
+    echo "deb [signed-by=/usr/share/keyrings/raspotify_key.asc] https://dtcooper.github.io/raspotify raspotify main" > /etc/apt/sources.list.d/raspotify.list
+
 RUN apt update && \
-    wget 'https://github.com/badaix/snapcast/releases/download/v0.34.0/snapserver_0.34.0-1_arm64_trixie.deb' && \
-    wget 'https://github.com/badaix/snapcast/releases/download/v0.34.0/snapclient_0.34.0-1_arm64_trixie.deb' && \
-    wget 'https://dtcooper.github.io/raspotify/raspotify-latest_arm64.deb' && \
+    wget "https://github.com/badaix/snapcast/releases/download/v${SNAPCAST_VERSION}/snapserver_${SNAPCAST_VERSION}-1_arm64_trixie.deb" && \
+    wget "https://github.com/badaix/snapcast/releases/download/v${SNAPCAST_VERSION}/snapclient_${SNAPCAST_VERSION}-1_arm64_trixie.deb" && \
     apt install -fy \
-        ./snapserver_0.34.0-1_arm64_trixie.deb \
-        ./snapclient_0.34.0-1_arm64_trixie.deb \
-        ./raspotify-latest_arm64.deb \
-        shairport-sync && \
-    rm snapserver_0.34.0-1_arm64_trixie.deb \
-       snapclient_0.34.0-1_arm64_trixie.deb \
-       raspotify-latest_arm64.deb && \
+        ./snapserver_${SNAPCAST_VERSION}-1_arm64_trixie.deb \
+        ./snapclient_${SNAPCAST_VERSION}-1_arm64_trixie.deb \
+        raspotify \
+        shairport-sync \
+        unattended-upgrades && \
+    rm snapserver_${SNAPCAST_VERSION}-1_arm64_trixie.deb \
+       snapclient_${SNAPCAST_VERSION}-1_arm64_trixie.deb \
     rm -rf /var/lib/apt/lists/*
 
-ADD snapserver.conf /etc/snapserver.conf
 RUN systemctl disable raspotify
 RUN systemctl disable shairport-sync
+
+ADD snapserver.conf /etc/snapserver.conf
+ADD 50unattended-upgrades /etc/apt/apt.conf.d/50unattended-upgrades
