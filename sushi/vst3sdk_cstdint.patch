@@ -1,0 +1,12 @@
+diff --git a/third-party/vst3sdk/public.sdk/source/vst/moduleinfo/moduleinfo.h b/third-party/vst3sdk/public.sdk/source/vst/moduleinfo/moduleinfo.h
+index 0f00000..1111111 100644
+--- a/third-party/vst3sdk/public.sdk/source/vst/moduleinfo/moduleinfo.h
++++ b/third-party/vst3sdk/public.sdk/source/vst/moduleinfo/moduleinfo.h
+@@ -38,6 +38,7 @@
+ 
+ #include <string>
+ #include <vector>
++#include <cstdint>
+ 
+ namespace Steinberg {
+ namespace ModuleInfoLib {

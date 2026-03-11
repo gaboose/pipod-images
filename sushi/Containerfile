@@ -1,0 +1,55 @@
+FROM ghcr.io/gaboose/raspios:2025-12-04-trixie-lite AS builder
+
+ARG SUSHI_VERSION="1.2.0"
+
+RUN apt-get update && apt-get install -y \
+    git cmake build-essential ninja-build \
+    libasound2-dev libjack-jackd2-dev \
+    libsndfile1-dev liblo-dev liblilv-dev \
+    lilv-utils mda-lv2 jalv \
+    pkg-config \
+    curl zip unzip tar \
+    python3
+
+WORKDIR /workspace
+
+RUN git clone -b ${SUSHI_VERSION} https://github.com/elk-audio/sushi.git && \
+    cd sushi && \
+    git submodule update --init --recursive
+
+WORKDIR /workspace/sushi
+
+# Running bootstrap-vcpkg.sh and cmake on arm without VCPKG_FORCE_SYSTEM_BINARIES fails with this:
+#   Environment variable VCPKG_FORCE_SYSTEM_BINARIES must be set on arm, s390x, ppc64le and riscv platforms.
+ENV VCPKG_FORCE_SYSTEM_BINARIES=1
+
+RUN mkdir build && cd build && \
+    ../third-party/vcpkg/bootstrap-vcpkg.sh && \
+    cmake -DCMAKE_BUILD_TYPE=Release\
+          -DCMAKE_TOOLCHAIN_FILE=../third-party/vcpkg/scripts/buildsystems/vcpkg.cmake\
+          -DSUSHI_WITH_UNIT_TESTS=off\ 
+          ..
+
+# Running make on newer toolchains fails with:
+#   error: ‘uint32_t’ does not name a type
+# And requires a manual import of <cstdint>.
+ADD vst3sdk_cstdint.patch .
+RUN patch -p1 < vst3sdk_cstdint.patch
+
+RUN cd build && make all sushi -j$(nproc)
+
+FROM ghcr.io/gaboose/raspios:2025-12-04-trixie-lite
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libasound2 \
+    libjack-jackd2-0 \
+    libsndfile1 \
+    liblo7 \
+    liblilv-0-0 \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /workspace/sushi/build/apps/sushi /usr/bin/sushi
+COPY --from=builder /workspace/sushi/build/twine/*.so* /usr/lib/
+COPY --from=builder /workspace/sushi/build/VST3/Release /usr/lib/vst3
+COPY --from=builder /workspace/sushi/misc /etc/sushi/misc
