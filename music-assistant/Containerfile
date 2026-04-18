@@ -1,0 +1,17 @@
+FROM ghcr.io/gaboose/raspios:2025-10-01-trixie-lite
+
+ENV SNAPCAST_VERSION=0.34.0
+
+WORKDIR /root
+
+RUN apt update && \
+    wget "https://github.com/badaix/snapcast/releases/download/v${SNAPCAST_VERSION}/snapclient_${SNAPCAST_VERSION}-1_arm64_trixie.deb" && \
+    apt install -y podman podman-compose ./snapclient_${SNAPCAST_VERSION}-1_arm64_trixie.deb && \
+    rm -rf /var/lib/apt/lists/*
+
+ADD podman-compose.yaml /opt/music-assistant/podman-compose.yaml
+ADD music-assistant.service /etc/systemd/system/music-assistant.service
+
+RUN ln -s /etc/systemd/system/music-assistant.service \
+    /etc/systemd/system/multi-user.target.wants/music-assistant.service
+
