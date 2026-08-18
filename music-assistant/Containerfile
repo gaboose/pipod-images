@@ -9,9 +9,5 @@ RUN apt update && \
     apt install -y podman podman-compose ./snapclient_${SNAPCAST_VERSION}-1_arm64_trixie.deb && \
     rm -rf /var/lib/apt/lists/*
 
-ADD podman-compose.yaml /opt/music-assistant/podman-compose.yaml
-ADD music-assistant.service /etc/systemd/system/music-assistant.service
-
-RUN ln -s /etc/systemd/system/music-assistant.service \
-    /etc/systemd/system/multi-user.target.wants/music-assistant.service
+ADD music-assistant.container /etc/containers/systemd/music-assistant.container
 

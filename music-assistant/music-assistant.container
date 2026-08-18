@@ -1,0 +1,17 @@
+[Unit]
+Description=Music Assistant Server
+
+[Container]
+Image=ghcr.io/music-assistant/server:latest
+ContainerName=music-assistant
+# Allows podman auto-update to pull container updates
+AutoUpdate=registry
+# Network mode must be set to host for MA to work correctly
+Network=host
+Volume=/opt/music-assistant/data:/data
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target
