@@ -10,4 +10,4 @@ RUN apt update && \
     rm -rf /var/lib/apt/lists/*
 
 ADD music-assistant.container /etc/containers/systemd/music-assistant.container
-
+RUN systemctl enable podman-auto-update.timer
